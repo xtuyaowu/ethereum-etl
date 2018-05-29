@@ -230,6 +230,32 @@ TBLPROPERTIES (
 );
 ```
 
+#### blocks in Parquet format
+
+```sql
+CREATE EXTERNAL TABLE IF NOT EXISTS blocks_parquet (
+    block_number BIGINT,
+    block_hash STRING,
+    block_parent_hash STRING,
+    block_nonce STRING,
+    block_sha3_uncles STRING,
+    block_logs_bloom STRING,
+    block_transactions_root STRING,
+    block_state_root STRING,
+    block_miner STRING,
+    block_difficulty BIGINT,
+    block_total_difficulty BIGINT,
+    block_size BIGINT,
+    block_extra_data STRING,
+    block_gas_limit BIGINT,
+    block_gas_used BIGINT,
+    block_timestamp BIGINT,
+    block_transaction_count BIGINT
+)
+STORED AS PARQUET
+  LOCATION 's3://<your_bucket>/glue/blocks';
+```
+
 #### transactions
 
 ```sql
@@ -258,6 +284,26 @@ LOCATION 's3://<your_bucket>/athena/lab1/transactions'
 TBLPROPERTIES (
   'skip.header.line.count' = '1'
 );
+```
+
+#### transactions in Parquet format
+
+```sql
+CREATE EXTERNAL TABLE IF NOT EXISTS transactions_parquet (
+    tx_hash STRING, 
+    tx_nonce BIGINT, 
+    tx_block_hash STRING,
+    tx_block_number BIGINT, 
+    tx_index BIGINT, 
+    tx_from STRING, 
+    tx_to STRING, 
+    tx_value BIGINT, 
+    tx_gas BIGINT, 
+    tx_gas_price BIGINT, 
+    tx_input STRING  
+)
+STORED AS PARQUET
+  LOCATION 's3://<your_bucket>/glue/transactions';
 ```
 
 #### erc20_transfers
