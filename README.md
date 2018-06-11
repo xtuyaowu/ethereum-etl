@@ -252,8 +252,9 @@ CREATE EXTERNAL TABLE IF NOT EXISTS blocks_parquet (
     block_timestamp BIGINT,
     block_transaction_count BIGINT
 )
+PARTITIONED BY (start_block BIGINT, end_block BIGINT)
 STORED AS PARQUET
-  LOCATION 's3://<your_bucket>/glue/blocks';
+  LOCATION 's3://<your_bucket>/ethereumetl/parquet/blocks';
 ```
 
 #### transactions
@@ -302,8 +303,9 @@ CREATE EXTERNAL TABLE IF NOT EXISTS transactions_parquet (
     tx_gas_price BIGINT, 
     tx_input STRING  
 )
+PARTITIONED BY (start_block BIGINT, end_block BIGINT)
 STORED AS PARQUET
-  LOCATION 's3://<your_bucket>/glue/transactions';
+  LOCATION 's3://<your_bucket>/ethereumetl/parquet/transactions';
 ```
 
 #### erc20_transfers
