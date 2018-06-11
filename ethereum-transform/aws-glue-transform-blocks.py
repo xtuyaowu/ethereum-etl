@@ -17,7 +17,7 @@ job.init(args['JOB_NAME'], args)
 ## @args: [database = "lab1", table_name = "transactions", transformation_ctx = "datasource0"]
 ## @return: datasource0
 ## @inputs: []
-datasource0 = glueContext.create_dynamic_frame.from_options(database="ethereum-etl", table_name="transactions",
+datasource0 = glueContext.create_dynamic_frame.from_catalog(database="ethereum-etl", table_name="blocks",
                                                             transformation_ctx="datasource0")
 ## @type: ApplyMapping
 ## @args: [mapping = [("start_block", "string", "start_block", "string"),("end_block", "string", "end_block", "string"),("tx_hash", "string", "tx_hash", "string"), ("tx_nonce", "long", "tx_nonce", "long"), ("tx_block_hash", "string", "tx_block_hash", "string"), ("tx_block_number", "long", "tx_block_number", "long"), ("tx_index", "long", "tx_index", "long"), ("tx_from", "string", "tx_from", "string"), ("tx_to", "string", "tx_to", "string"), ("tx_value", "long", "tx_value", "long"), ("tx_gas", "long", "tx_gas", "long"), ("tx_gas_price", "long", "tx_gas_price", "long"), ("tx_input", "string", "tx_input", "string")], transformation_ctx = "applymapping1"]
@@ -54,7 +54,7 @@ dropnullfields3 = DropNullFields.apply(frame=resolvechoice2, transformation_ctx=
 ## @inputs: [frame = dropnullfields3]
 datasink4 = glueContext.write_dynamic_frame.from_options(frame=dropnullfields3, connection_type="s3",
                                                          connection_options={
-                                                             "path": "s3://<your_bucket>/ethereum-etl/parquet/transactions",
+                                                             "path": "s3://<your_bucket>/ethereum-etl/parquet/blocks",
                                                              "partitionKeys": ["start_block", "end_block"]},
                                                          format="parquet", transformation_ctx="datasink4")
 job.commit()
