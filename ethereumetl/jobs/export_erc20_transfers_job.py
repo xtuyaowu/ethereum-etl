@@ -1,3 +1,5 @@
+from pymongo import MongoClient
+
 from ethereumetl.exporters import CsvItemExporter
 from ethereumetl.file_utils import get_file_handle, close_silently
 from ethereumetl.jobs.batch_export_job import BatchExportJob
@@ -15,6 +17,8 @@ FIELDS_TO_EXPORT = [
     'erc20_block_number'
 ]
 
+con = MongoClient('127.0.0.1', 27017)
+erc20_transfer_logs = con.eth.erc20_transfer_logs
 
 class ExportErc20TransfersJob(BatchExportJob):
     def __init__(
@@ -38,13 +42,13 @@ class ExportErc20TransfersJob(BatchExportJob):
         self.erc20_processor = EthErc20Processor()
 
         self.output_file = None
-        self.exporter = None
+        # self.exporter = None
 
     def _start(self):
         super()._start()
 
         self.output_file = get_file_handle(self.output, binary=True, create_parent_dirs=True)
-        self.exporter = CsvItemExporter(self.output_file, fields_to_export=self.fields_to_export)
+        # self.exporter = CsvItemExporter(self.output_file, fields_to_export=self.fields_to_export)
 
     def _export_batch(self, batch_start, batch_end):
         # https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getfilterlogs
@@ -63,7 +67,8 @@ class ExportErc20TransfersJob(BatchExportJob):
             log = self.receipt_log_mapper.web3_dict_to_receipt_log(event)
             erc20_transfer = self.erc20_processor.filter_transfer_from_log(log)
             if erc20_transfer is not None:
-                self.exporter.export_item(self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer))
+                # self.exporter.export_item(self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer))
+                erc20_transfer_logs.insert(self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer))
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
