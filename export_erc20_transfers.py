@@ -33,9 +33,12 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 #
 # job.run()
 
-con = MongoClient('127.0.0.1', 27017)
+#con = MongoClient('127.0.0.1', 27017)
+con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 eth_config = con.eth.eth_config
-geth_ipc = "~/Library/Ethereum/geth.ipc"
+geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/mainchain/geth.ipc"
+
+
 def extractEosBlockData():
 
     while True:
@@ -45,9 +48,12 @@ def extractEosBlockData():
             blockid = blockConfig["blockid"]
             print(blockid)
             web3 = ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300)))
-            blockidNow = web3.eth.blockNumber()
+            blockidNow = web3.eth.blockNumber
+            print(blockidNow)
+
             if blockidNow > blockid:
                 blockConfig["export_flag"] = True
+                blockConfig["blockid"] = blockidNow
                 eth_config.save(blockConfig)
 
                 blockid += 1
@@ -64,13 +70,4 @@ def extractEosBlockData():
 
 if __name__ == '__main__':
 
-    job = ExportErc20TransfersJob(
-        start_block=1,
-        end_block=1000000,
-        batch_size=100,
-        web3=ThreadLocalProxy(lambda: Web3(IPCProvider("~/Library/Ethereum/geth.ipc", timeout=300))),
-        output="",
-        max_workers=5,
-        tokens=None)
-
-    job.run()
+    extractEosBlockData()

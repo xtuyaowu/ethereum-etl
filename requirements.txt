@@ -1,3 +1,4 @@
+pymongo
 web3~=4.3.0
 typing
 pytest~=3.2.0
