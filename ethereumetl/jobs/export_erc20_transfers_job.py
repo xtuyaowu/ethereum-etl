@@ -23,6 +23,7 @@ con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 
 erc20_transfers = con.eth.erc20_transfers
 erc20_receipt = con.eth.erc20_receipt
+erc20_transaction = con.eth.erc20_transaction
 eth_config = con.eth.eth_config
 
 class ExportErc20TransfersJob(BatchExportJob):
@@ -95,6 +96,7 @@ class ExportErc20TransfersJob(BatchExportJob):
 
                 erc20_transfers.insert(erc20_transfer_dict)
                 erc20_receipt.insert(receipt_dict)
+                erc20_transaction.insert(transaction_dict)
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
