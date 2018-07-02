@@ -21,6 +21,7 @@ FIELDS_TO_EXPORT = [
 con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 
 erc20_transfers = con.eth.erc20_transfers
+erc20_receipt = con.eth.erc20_receipt
 eth_config = con.eth.eth_config
 
 class ExportErc20TransfersJob(BatchExportJob):
@@ -75,7 +76,12 @@ class ExportErc20TransfersJob(BatchExportJob):
                 erc20_transfer_dict = self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer)
                 print(erc20_transfer_dict)
                 erc20_transfer_dict["erc20_value"] = str(erc20_transfer_dict["erc20_value"])
+
+                receipt = self.web3.eth.getTransactionReceipt(erc20_transfer_dict.get("erc20_tx_hash"));
+                status = receipt.get("status")
+                erc20_transfer_dict["status"] = status
                 erc20_transfers.insert(erc20_transfer_dict)
+                erc20_receipt.insert(receipt)
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
