@@ -1,3 +1,6 @@
+import traceback
+
+
 class EthErc20TransferMapper(object):
     def erc20_transfer_to_dict(self, erc20_transfer):
         return {
@@ -11,6 +14,12 @@ class EthErc20TransferMapper(object):
         }
 
     def erc20_receipt_transfer_to_dict(self, receipt):
+        try:
+            status = receipt.status
+        except:
+            status = None
+            exstr = traceback.format_exc()
+            print(exstr)
         return {
             'blockHash': receipt.blockHash,
             'blockNumber': receipt.blockNumber,
@@ -22,7 +31,8 @@ class EthErc20TransferMapper(object):
             'root': receipt.root,
             'to': receipt.to,
             'transactionHash': receipt.transactionHash,
-            'transactionIndex': receipt.transactionIndex
+            'transactionIndex': receipt.transactionIndex,
+            'status':status
         }
 
     def transaction_to_dict(self, transaction):
