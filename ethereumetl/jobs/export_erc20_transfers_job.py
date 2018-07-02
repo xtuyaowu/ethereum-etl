@@ -18,7 +18,8 @@ FIELDS_TO_EXPORT = [
 ]
 
 con = MongoClient('127.0.0.1', 27017)
-erc20_transfer_logs = con.eth.erc20_transfer_logs
+erc20_transfers = con.eth.erc20_transfers
+eth_config = con.eth.eth_config
 
 class ExportErc20TransfersJob(BatchExportJob):
     def __init__(
@@ -43,6 +44,7 @@ class ExportErc20TransfersJob(BatchExportJob):
 
         self.output_file = None
         # self.exporter = None
+        self.start_block = start_block
 
     def _start(self):
         super()._start()
@@ -68,10 +70,15 @@ class ExportErc20TransfersJob(BatchExportJob):
             erc20_transfer = self.erc20_processor.filter_transfer_from_log(log)
             if erc20_transfer is not None:
                 # self.exporter.export_item(self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer))
-                erc20_transfer_logs.insert(self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer))
+                erc20_transfers.insert(self.erc20_transfer_mapper.erc20_transfer_to_dict(erc20_transfer))
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
     def _end(self):
         super()._end()
         close_silently(self.output_file)
+
+        blockConfig = eth_config.find_one({'config_id': 1})
+        blockConfig["export_flag"] = False
+        blockConfig["blockid"] = self.start_block
+        eth_config.save(blockConfig)

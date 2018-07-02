@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import argparse
+from time import sleep
 
+from pymongo import MongoClient
 from web3 import IPCProvider, Web3
 
 from ethereumetl.jobs.export_erc20_transfers_job import ExportErc20TransfersJob
@@ -31,8 +33,37 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 #
 # job.run()
 
+con = MongoClient('127.0.0.1', 27017)
+eth_config = con.eth.eth_config
+geth_ipc = "~/Library/Ethereum/geth.ipc"
+def extractEosBlockData():
+
+    while True:
+        blockConfig = eth_config.find_one({'config_id': 1})
+        export_flag = blockConfig["export_flag"]
+        if export_flag is False:
+            blockid = blockConfig["blockid"]
+            print(blockid)
+            web3 = ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300)))
+            blockidNow = web3.eth.blockNumber()
+            if blockidNow > blockid:
+                blockConfig["export_flag"] = True
+                eth_config.save(blockConfig)
+
+                blockid += 1
+                job = ExportErc20TransfersJob(
+                    start_block=blockid,
+                    end_block=blockidNow,
+                    batch_size=100,
+                    web3=ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300))),
+                    output="",
+                    max_workers=5,
+                    tokens=None)
+                job.run()
+        sleep(3)
 
 if __name__ == '__main__':
+
     job = ExportErc20TransfersJob(
         start_block=1,
         end_block=1000000,
