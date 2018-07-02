@@ -80,6 +80,9 @@ class ExportErc20TransfersJob(BatchExportJob):
                 print(erc20_transfer_dict)
                 erc20_transfer_dict["erc20_value"] = str(erc20_transfer_dict["erc20_value"])
 
+                block = self.web3.eth.getBlock(erc20_transfer_dict["erc20_block_number"])
+                erc20_transfer_dict["timestamp"] = block.timestamp
+
                 receipt = self.web3.eth.getTransactionReceipt(erc20_transfer_dict.get("erc20_tx_hash"))
                 receipt_dict = self.erc20_transfer_mapper.erc20_receipt_transfer_to_dict(receipt)
 
