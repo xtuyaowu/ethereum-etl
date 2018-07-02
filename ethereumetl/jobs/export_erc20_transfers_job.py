@@ -5,6 +5,7 @@ from ethereumetl.file_utils import get_file_handle, close_silently
 from ethereumetl.jobs.batch_export_job import BatchExportJob
 from ethereumetl.mappers.erc20_transfer_mapper import EthErc20TransferMapper
 from ethereumetl.mappers.receipt_log_mapper import EthReceiptLogMapper
+from ethereumetl.mappers.transaction_mapper import EthTransactionMapper
 from ethereumetl.service.erc20_processor import EthErc20Processor, TRANSFER_EVENT_TOPIC
 
 FIELDS_TO_EXPORT = [
@@ -77,9 +78,16 @@ class ExportErc20TransfersJob(BatchExportJob):
                 print(erc20_transfer_dict)
                 erc20_transfer_dict["erc20_value"] = str(erc20_transfer_dict["erc20_value"])
 
-                receipt = self.web3.eth.getTransactionReceipt(erc20_transfer_dict.get("erc20_tx_hash"));
-                status = receipt.get("status")
-                erc20_transfer_dict["status"] = status
+                receipt = self.web3.eth.getTransactionReceipt(erc20_transfer_dict.get("erc20_tx_hash"))
+                receipt_dict = self.erc20_transfer_mapper.erc20_receipt_transfer_to_dict(receipt)
+
+                transaction = self.web3.eth.getTransaction(erc20_transfer_dict.get("erc20_tx_hash"))
+                transaction_dict = EthTransactionMapper.transaction_to_dict(transaction)
+                
+                erc20_transfer_dict["status"] = 0 # 0 fail
+                if receipt_dict.get("blockNumber") is not None and receipt_dict.get("gasUsed") < transaction_dict.get("tx_gas"):
+                    erc20_transfer_dict["status"] = 1 # 1 success
+
                 erc20_transfers.insert(erc20_transfer_dict)
                 erc20_receipt.insert(receipt)
 
