@@ -24,3 +24,15 @@ class EthErc20TransferMapper(object):
             'transactionHash': receipt.transactionHash,
             'transactionIndex': receipt.transactionIndex
         }
+
+    def transaction_to_dict(self, transaction):
+        return {
+            'blockHash': transaction.blockHash,
+            'blockNumber': transaction.blockNumber,
+            'gas': transaction.gas,
+            'gasPrice': transaction.gasPrice,
+            'input': transaction.input,
+            'nonce': transaction.nonce,
+            'to': transaction.to,
+            'transactionIndex': transaction.transactionIndex
+        }
