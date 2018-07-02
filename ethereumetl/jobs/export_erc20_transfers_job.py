@@ -45,6 +45,8 @@ class ExportErc20TransfersJob(BatchExportJob):
         self.receipt_log_mapper = EthReceiptLogMapper()
         self.erc20_transfer_mapper = EthErc20TransferMapper()
         self.erc20_processor = EthErc20Processor()
+        self.ethTransactionMapper = EthTransactionMapper()
+
 
         self.output_file = None
         # self.exporter = None
@@ -82,7 +84,7 @@ class ExportErc20TransfersJob(BatchExportJob):
                 receipt_dict = self.erc20_transfer_mapper.erc20_receipt_transfer_to_dict(receipt)
 
                 transaction = self.web3.eth.getTransaction(erc20_transfer_dict.get("erc20_tx_hash"))
-                transaction_dict = EthTransactionMapper.transaction_to_dict(transaction)
+                transaction_dict = self.ethTransactionMapper.transaction_to_dict(transaction)
                 
                 erc20_transfer_dict["status"] = 0 # 0 fail
                 if receipt_dict.get("blockNumber") is not None and receipt_dict.get("gasUsed") < transaction_dict.get("tx_gas"):

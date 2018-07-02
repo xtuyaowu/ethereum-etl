@@ -18,6 +18,7 @@ class EthTransactionMapper(object):
         transaction.input = json_dict.get('input', None)
         return transaction
 
+
     def transaction_to_dict(self, transaction):
         return {
             'tx_hash': transaction.hash,
