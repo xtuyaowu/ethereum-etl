@@ -91,7 +91,7 @@ class ExportErc20TransfersJob(BatchExportJob):
                     erc20_transfer_dict["status"] = 1 # 1 success
 
                 erc20_transfers.insert(erc20_transfer_dict)
-                erc20_receipt.insert(receipt)
+                erc20_receipt.insert(receipt_dict)
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
