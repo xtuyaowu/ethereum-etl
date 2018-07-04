@@ -89,7 +89,8 @@ class ExportErc20TransfersJob(BatchExportJob):
 
                 transaction = self.web3.eth.getTransaction(erc20_transfer_dict.get("erc20_tx_hash"))
                 transaction_dict = self.erc20_transfer_mapper.transaction_to_dict(transaction)
-                
+
+                erc20_transfer_dict["gasUsed"] = receipt_dict.get("gasUsed")
                 erc20_transfer_dict["status"] = 0 # 0 fail
                 if receipt_dict.get("blockNumber") is not None and receipt_dict.get("gasUsed") < transaction_dict.get("gas"):
                     erc20_transfer_dict["status"] = 1 # 1 success
