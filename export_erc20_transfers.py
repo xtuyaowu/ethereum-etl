@@ -3,7 +3,7 @@ import argparse
 from time import sleep
 
 from pymongo import MongoClient
-from web3 import IPCProvider, Web3
+from web3 import IPCProvider, Web3, HTTPProvider
 
 from ethereumetl.jobs.export_erc20_transfers_job import ExportErc20TransfersJob
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
@@ -37,7 +37,7 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 eth_config = con.eth.eth_config
 geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/mainchain/geth.ipc"
-# http_address = "10.8.41.155:8545"
+http_address = "http://10.8.41.155:8545"
 
 
 def extractEosBlockData():
@@ -48,7 +48,8 @@ def extractEosBlockData():
         if export_flag is False:
             blockid = blockConfig["blockid"]
             print(blockid)
-            web3 = ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300)))
+            # web3 = ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300)))
+            web3 = ThreadLocalProxy(lambda: Web3(HTTPProvider(http_address)))
             blockidNow = web3.eth.blockNumber
             print(blockidNow)
 
