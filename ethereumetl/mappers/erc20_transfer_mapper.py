@@ -28,7 +28,7 @@ class EthErc20TransferMapper(object):
             'gasUsed': receipt.gasUsed,
             'logs': receipt.logs,
             'logsBloom': receipt.logsBloom,
-            'root': receipt.root,
+            'root': receipt.root if hasattr(receipt, 'root') else None,
             'to': receipt.to,
             'transactionHash': receipt.transactionHash,
             'transactionIndex': receipt.transactionIndex,
