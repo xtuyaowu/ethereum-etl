@@ -37,6 +37,7 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 eth_config = con.eth.eth_config
 geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/mainchain/geth.ipc"
+# http_address = "10.8.41.155:8545"
 
 
 def extractEosBlockData():

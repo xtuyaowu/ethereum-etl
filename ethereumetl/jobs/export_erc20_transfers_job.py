@@ -91,6 +91,7 @@ class ExportErc20TransfersJob(BatchExportJob):
                 transaction_dict = self.erc20_transfer_mapper.transaction_to_dict(transaction)
 
                 erc20_transfer_dict["gasUsed"] = receipt_dict.get("gasUsed")
+                erc20_transfer_dict["gasPrice"] = transaction_dict.get("gasPrice")
                 erc20_transfer_dict["status"] = 0 # 0 fail
                 if receipt_dict.get("blockNumber") is not None and receipt_dict.get("gasUsed") < transaction_dict.get("gas"):
                     erc20_transfer_dict["status"] = 1 # 1 success
