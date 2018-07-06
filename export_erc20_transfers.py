@@ -55,10 +55,9 @@ def extractErc20BlockData():
 
             if blockidNow > blockid:
                 blockConfig["export_flag"] = True
-                blockConfig["blockid"] = blockidNow
-                eth_config.save(blockConfig)
-
                 blockid += 1
+                blockConfig["blockid"] = blockid
+                eth_config.save(blockConfig)
                 job = ExportErc20TransfersJob(
                     start_block=blockid,
                     end_block=blockidNow,
