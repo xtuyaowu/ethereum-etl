@@ -49,7 +49,7 @@ con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 
 blocks_exporter = con.eth.blocks_exporter
 transactions_exporter = con.eth.transactions_exporter
-eth_config = con.eth.eth_config
+eth_config = con.eth.eth_blockConfig
 
 # Exports blocks and transactions
 class ExportBlocksJob(BatchExportJob):
@@ -85,6 +85,8 @@ class ExportBlocksJob(BatchExportJob):
         self.blocks_exporter = None
         self.transactions_exporter = None
 
+        self.start_block = start_block
+
     def _start(self):
         super()._start()
 
@@ -107,13 +109,17 @@ class ExportBlocksJob(BatchExportJob):
     def _export_block(self, block):
         # if self.export_blocks:
         #     self.blocks_exporter.export_item(self.block_mapper.block_to_dict(block))
-        blocks_exporter.insert(self.block_mapper.block_to_dict(block))
+        block_dict = self.block_mapper.block_to_dict(block)
+        block_timestamp = block_dict["block_timestamp"]
+        blocks_exporter.insert(block_dict)
 
 
         # if self.export_transactions:
         #     for tx in block.transactions:
         #         self.transactions_exporter.export_item(self.transaction_mapper.transaction_to_dict(tx))
         for tx in block.transactions:
+            tx = self.transaction_mapper.transaction_to_dict(tx)
+            tx["timestamp"] = block_timestamp
             transactions_exporter.insert(self.transaction_mapper.transaction_to_dict(tx))
 
 
@@ -121,3 +127,7 @@ class ExportBlocksJob(BatchExportJob):
         super()._end()
         # close_silently(self.blocks_output_file)
         # close_silently(self.transactions_output_file)
+        blockConfig = eth_config.find_one({'config_id': 1})
+        blockConfig["export_flag"] = False
+        blockConfig["blockid"] = self.start_block
+        eth_config.save(blockConfig)

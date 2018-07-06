@@ -37,7 +37,7 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 
 #con = MongoClient('127.0.0.1', 27017)
 con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
-eth_config = con.eth.eth_config
+eth_config = con.eth.eth_blockConfig
 geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/localchain/geth.ipc"
 http_address = "http://10.8.41.155:8545"
 
@@ -74,14 +74,4 @@ def extractBlockData():
         sleep(3)
 
 if __name__ == '__main__':
-    # extractBlockData()
-    job = ExportBlocksJob(
-        start_block=0,
-        end_block=710,
-        batch_size=100,
-        ipc_wrapper=ThreadLocalProxy(lambda: IPCWrapper(geth_ipc, timeout=300)),
-        max_workers=5,
-        blocks_output="",
-        transactions_output="")
-
-    job.run()
+    extractBlockData()

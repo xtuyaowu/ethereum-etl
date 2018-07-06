@@ -96,9 +96,10 @@ class ExportErc20TransfersJob(BatchExportJob):
                 if receipt_dict.get("blockNumber") is not None and receipt_dict.get("gasUsed") < transaction_dict.get("gas"):
                     erc20_transfer_dict["status"] = 1 # 1 success
 
-                erc20_transfers.insert(erc20_transfer_dict)
-                erc20_receipt.insert(receipt_dict)
-                erc20_transaction.insert(transaction_dict)
+                if erc20_transfers.find_one({"erc20_tx_hash" : erc20_transfer_dict['erc20_tx_hash']}) is None:
+                    erc20_transfers.insert(erc20_transfer_dict)
+                    erc20_receipt.insert(receipt_dict)
+                    erc20_transaction.insert(transaction_dict)
 
         self.web3.eth.uninstallFilter(event_filter.filter_id)
 
