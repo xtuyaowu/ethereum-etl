@@ -120,7 +120,7 @@ class ExportBlocksJob(BatchExportJob):
         for tx in block.transactions:
             tx = self.transaction_mapper.transaction_to_dict(tx)
             tx["timestamp"] = block_timestamp
-            transactions_exporter.insert(self.transaction_mapper.transaction_to_dict(tx))
+            transactions_exporter.insert(tx)
 
 
     def _end(self):
