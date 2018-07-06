@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from pymongo import MongoClient
 
@@ -108,6 +109,7 @@ class ExportBlocksJob(BatchExportJob):
         #     self.blocks_exporter.export_item(self.block_mapper.block_to_dict(block))
         blocks_exporter.insert(self.block_mapper.block_to_dict(block))
 
+
         # if self.export_transactions:
         #     for tx in block.transactions:
         #         self.transactions_exporter.export_item(self.transaction_mapper.transaction_to_dict(tx))
@@ -117,5 +119,5 @@ class ExportBlocksJob(BatchExportJob):
 
     def _end(self):
         super()._end()
-        close_silently(self.blocks_output_file)
-        close_silently(self.transactions_output_file)
+        # close_silently(self.blocks_output_file)
+        # close_silently(self.transactions_output_file)

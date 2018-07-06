@@ -14,12 +14,7 @@ class EthErc20TransferMapper(object):
         }
 
     def erc20_receipt_transfer_to_dict(self, receipt):
-        try:
-            status = receipt.status
-        except:
-            status = None
-            exstr = traceback.format_exc()
-            print(exstr)
+
         return {
             'blockHash': receipt.blockHash,
             'blockNumber': receipt.blockNumber,
@@ -32,7 +27,7 @@ class EthErc20TransferMapper(object):
             'to': receipt.to,
             'transactionHash': receipt.transactionHash,
             'transactionIndex': receipt.transactionIndex,
-            'status':status
+            'status':receipt.status if hasattr(receipt, 'status') else None,
         }
 
     def transaction_to_dict(self, transaction):

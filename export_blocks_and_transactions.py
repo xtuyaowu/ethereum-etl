@@ -38,7 +38,7 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 #con = MongoClient('127.0.0.1', 27017)
 con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
 eth_config = con.eth.eth_config
-geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/mainchain/geth.ipc"
+geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/localchain/geth.ipc"
 http_address = "http://10.8.41.155:8545"
 
 
@@ -50,8 +50,8 @@ def extractBlockData():
         if export_flag is False:
             blockid = blockConfig["blockid"]
             print(blockid)
-            # web3 = ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300)))
-            web3 = ThreadLocalProxy(lambda: Web3(HTTPProvider(http_address)))
+            web3 = ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300)))
+            # web3 = ThreadLocalProxy(lambda: Web3(HTTPProvider(http_address)))
             blockidNow = web3.eth.blockNumber
             print(blockidNow)
 
@@ -65,7 +65,7 @@ def extractBlockData():
                     start_block=blockid,
                     end_block=blockidNow,
                     batch_size=100,
-                    ipc_wrapper=ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300))),
+                    ipc_wrapper=ThreadLocalProxy(lambda: IPCWrapper(geth_ipc, timeout=300)),
                     max_workers=5,
                     blocks_output="",
                     transactions_output="")
@@ -77,9 +77,9 @@ if __name__ == '__main__':
     # extractBlockData()
     job = ExportBlocksJob(
         start_block=0,
-        end_block=blockidNow,
+        end_block=710,
         batch_size=100,
-        ipc_wrapper=ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300))),
+        ipc_wrapper=ThreadLocalProxy(lambda: IPCWrapper(geth_ipc, timeout=300)),
         max_workers=5,
         blocks_output="",
         transactions_output="")

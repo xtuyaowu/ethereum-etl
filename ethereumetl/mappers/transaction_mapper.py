@@ -21,15 +21,15 @@ class EthTransactionMapper(object):
 
     def transaction_to_dict(self, transaction):
         return {
-            'tx_hash': transaction.hash,
-            'tx_nonce': transaction.nonce,
-            'tx_block_hash': transaction.block_hash,
-            'tx_block_number': transaction.block_number,
-            'tx_index': transaction.index,
-            'tx_from': transaction.from_address,
-            'tx_to': transaction.to_address,
-            'tx_value': transaction.value,
-            'tx_gas': transaction.gas,
-            'tx_gas_price': transaction.gas_price,
-            'tx_input': transaction.input,
+            'tx_hash': str(transaction.hash),
+            'tx_nonce': str(transaction.nonce),
+            'tx_block_hash': str(transaction.block_hash),
+            'tx_block_number': str(transaction.block_number),
+            'tx_index': str(transaction.index),
+            'tx_from': str(transaction.from_address),
+            'tx_to': str(transaction.to_address),
+            'tx_value': str(transaction.value),
+            'tx_gas': str(transaction.gas),
+            'tx_gas_price': str(transaction.gas_price),
+            'tx_input': str(transaction.input),
         }
