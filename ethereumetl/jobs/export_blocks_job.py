@@ -110,17 +110,19 @@ class ExportBlocksJob(BatchExportJob):
         # if self.export_blocks:
         #     self.blocks_exporter.export_item(self.block_mapper.block_to_dict(block))
         block_dict = self.block_mapper.block_to_dict(block)
-        block_timestamp = block_dict["block_timestamp"]
-        blocks_exporter.insert(block_dict)
+        if blocks_exporter.find_one({"block_hash": block_dict['block_hash']}) is None:
+            block_timestamp = block_dict["block_timestamp"]
+            blocks_exporter.insert(block_dict)
 
 
-        # if self.export_transactions:
-        #     for tx in block.transactions:
-        #         self.transactions_exporter.export_item(self.transaction_mapper.transaction_to_dict(tx))
-        for tx in block.transactions:
-            tx = self.transaction_mapper.transaction_to_dict(tx)
-            tx["timestamp"] = block_timestamp
-            transactions_exporter.insert(tx)
+            # if self.export_transactions:
+            #     for tx in block.transactions:
+            #         self.transactions_exporter.export_item(self.transaction_mapper.transaction_to_dict(tx))
+            for tx in block.transactions:
+                tx = self.transaction_mapper.transaction_to_dict(tx)
+                if transactions_exporter.find_one({"tx_block_hash": tx['tx_block_hash']}) is None:
+                    tx["timestamp"] = block_timestamp
+                    transactions_exporter.insert(tx)
 
 
     def _end(self):
