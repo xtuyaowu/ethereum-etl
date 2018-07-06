@@ -1,5 +1,7 @@
 import json
 
+from pymongo import MongoClient
+
 from ethereumetl.exporters import CsvItemExporter
 from ethereumetl.file_utils import get_file_handle, close_silently
 from ethereumetl.jobs.batch_export_job import BatchExportJob
@@ -41,6 +43,12 @@ TRANSACTION_FIELDS_TO_EXPORT = [
     'tx_input'
 ]
 
+#con = MongoClient('127.0.0.1', 27017)
+con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
+
+blocks_exporter = con.eth.blocks_exporter
+transactions_exporter = con.eth.transactions_exporter
+eth_config = con.eth.eth_config
 
 # Exports blocks and transactions
 class ExportBlocksJob(BatchExportJob):
@@ -64,8 +72,8 @@ class ExportBlocksJob(BatchExportJob):
 
         self.export_blocks = blocks_output is not None
         self.export_transactions = transactions_output is not None
-        if not self.export_blocks and not self.export_transactions:
-            raise ValueError('Either blocks_output or transactions_output must be provided')
+        # if not self.export_blocks and not self.export_transactions:
+        #     raise ValueError('Either blocks_output or transactions_output must be provided')
 
         self.block_mapper = EthBlockMapper()
         self.transaction_mapper = EthTransactionMapper()
@@ -79,13 +87,13 @@ class ExportBlocksJob(BatchExportJob):
     def _start(self):
         super()._start()
 
-        self.blocks_output_file = get_file_handle(self.blocks_output, binary=True, create_parent_dirs=True)
-        self.blocks_exporter = CsvItemExporter(
-            self.blocks_output_file, fields_to_export=self.block_fields_to_export)
-
-        self.transactions_output_file = get_file_handle(self.transactions_output, binary=True, create_parent_dirs=True)
-        self.transactions_exporter = CsvItemExporter(
-            self.transactions_output_file, fields_to_export=self.transaction_fields_to_export)
+        # self.blocks_output_file = get_file_handle(self.blocks_output, binary=True, create_parent_dirs=True)
+        # self.blocks_exporter = CsvItemExporter(
+        #     self.blocks_output_file, fields_to_export=self.block_fields_to_export)
+        #
+        # self.transactions_output_file = get_file_handle(self.transactions_output, binary=True, create_parent_dirs=True)
+        # self.transactions_exporter = CsvItemExporter(
+        #     self.transactions_output_file, fields_to_export=self.transaction_fields_to_export)
 
     def _export_batch(self, batch_start, batch_end):
         blocks_rpc = list(generate_get_block_by_number_json_rpc(batch_start, batch_end, self.export_transactions))
@@ -96,11 +104,16 @@ class ExportBlocksJob(BatchExportJob):
             self._export_block(block)
 
     def _export_block(self, block):
-        if self.export_blocks:
-            self.blocks_exporter.export_item(self.block_mapper.block_to_dict(block))
-        if self.export_transactions:
-            for tx in block.transactions:
-                self.transactions_exporter.export_item(self.transaction_mapper.transaction_to_dict(tx))
+        # if self.export_blocks:
+        #     self.blocks_exporter.export_item(self.block_mapper.block_to_dict(block))
+        blocks_exporter.insert(self.block_mapper.block_to_dict(block))
+
+        # if self.export_transactions:
+        #     for tx in block.transactions:
+        #         self.transactions_exporter.export_item(self.transaction_mapper.transaction_to_dict(tx))
+        for tx in block.transactions:
+            transactions_exporter.insert(self.transaction_mapper.transaction_to_dict(tx))
+
 
     def _end(self):
         super()._end()

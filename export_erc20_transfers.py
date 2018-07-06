@@ -40,7 +40,7 @@ geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/mainchain/ge
 http_address = "http://10.8.41.155:8545"
 
 
-def extractEosBlockData():
+def extractErc20BlockData():
 
     while True:
         blockConfig = eth_config.find_one({'config_id': 1})
@@ -71,5 +71,4 @@ def extractEosBlockData():
         sleep(3)
 
 if __name__ == '__main__':
-
-    extractEosBlockData()
+    extractErc20BlockData()
