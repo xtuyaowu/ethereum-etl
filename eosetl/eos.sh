@@ -83,8 +83,8 @@ fi
 
 #打开钱包 cleos wallet open
 if [ "$1" = "walletopen" ]; then
-	hba=`/usr/local/bin/cleos -u $2 wallet open`;
-	echo cleos -u $2 wallet open
+	hba=`/root/eos/build/programs/cleos/cleos -u $2 wallet open -n $3`;
+	echo cleos -u $2 wallet open -n $3
 	echo $hba
 fi
 
@@ -165,14 +165,14 @@ fi
 
 #购买
 if [ "$1" = "buyram" ]; then
-	hba=`/usr/local/bin/cleos -u $2 system buyram $3 $4 "$4 EOS" -p $6`;
-	echo cleos -u $2 system buyram $3 $4 "$5 EOS" -p $6
+	hba=`/root/eos/build/programs/cleos/cleos -u $2 system buyram $3 $4 "$5 EOS";
+	echo cleos -u $2 system buyram $3 $4 "$5 EOS"
 	echo $hba
 fi
 
 #卖出
 if [ "$1" = "sellram" ]; then
-	hba=`/usr/local/bin/cleos -u $2 system sellram $3 $4 -p $5
-	echo cleos -u $2 system sellram $3 $4 -p $5
+	hba=`/usr/local/bin/cleos -u $2 system sellram $3 $4;
+	echo cleos -u $2 system sellram $3 $4
 	echo $hba
 fi
