@@ -1,11 +1,15 @@
 ﻿import traceback
 
+from pymongo import MongoClient
 from websocket import create_connection
 import gzip
 import time
 import json
 import csv
 import pymysql
+
+con = MongoClient('118.122.185.14', 27017)
+zecusdt = con.exchange.zecusdt
 
 global globalTime
 # 获取历史数据起始时间
@@ -111,12 +115,17 @@ if __name__ == '__main__':
                 else:
                     resutlJson = json.loads(result)
                     data = resutlJson['data']
-                    db = pymysql.connect("192.168.1.167", "root", "123", "test3")
-                    cursor = db.cursor()
-                    json_to_csv(data)
+
+                    cursor = None
+                    db = None
+                    # db = pymysql.connect("192.168.1.167", "root", "123", "test3")
+                    # cursor = db.cursor()
+                    # json_to_csv(data)
+                    # db.close()
+
                     count += 1
-                    db.close()
                     print(data)
+                    zecusdt.insert_many(data)
         except Exception as e:
             print('connect ws error,retry...')
             exstr = traceback.format_exc()
