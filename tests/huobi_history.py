@@ -12,8 +12,6 @@ global globalTime
 globalTime = 1526392680
 #1506787200
 
-
-
 def loop_data(o, k=''):
     global json_ob, c_line
     if isinstance(o, dict):
@@ -29,7 +27,6 @@ def loop_data(o, k=''):
         if not k in json_ob:
             json_ob[k] = {}
         json_ob[k][c_line] = o
-
 
 def get_title_rows(json_ob):
     title = []
@@ -51,6 +48,7 @@ def get_title_rows(json_ob):
             else:
                 row[k] = ''
         rows.append(row)
+        
     for dbRow in rows:
         sql = """insert into zecusdt_min(id,open,close,low,high,amount,vol,count) VALUES (""" + str(
             dbRow.get('id')) + """,""" + str(dbRow.get('open')) + """,""" + str(dbRow.get('close')) + """,""" + str(
@@ -63,12 +61,10 @@ def get_title_rows(json_ob):
             db.rollback()
     return title, rows
 
-
 def write_csv(title, rows, csv_file_name):
     with open(csv_file_name, 'a+', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=title)
         writer.writerows(rows)
-
 
 def json_to_csv(object_list):
     global json_ob, c_line
@@ -79,21 +75,20 @@ def json_to_csv(object_list):
         c_line += 1
     title, rows = get_title_rows(json_ob)
 
-
 global count
 count = 0
 global x
 x = globalTime
+
 if __name__ == '__main__':
-    while (1):
+    while True:
         try:
             ws = create_connection("wss://api.huobi.pro/ws", http_proxy_host="10.8.42.143", http_proxy_port=1080)
             # ws = create_connection("wss://api.huobipro.com/ws")
 
-            while (1):
+            while True:
                 globalTime += 18000
-                tradeStr = """{"req": "market.zecusdt.kline.1min","id": "id10", "from": """ + str(
-                    globalTime) + """, "to":""" + str(globalTime + 18000) + """ }"""
+                tradeStr = """{"req": "market.zecusdt.kline.1min","id": "id10", "from": """ + str(globalTime) + """, "to":""" + str(globalTime + 18000) + """ }"""
                 ws.send(tradeStr)
                 compressData = ws.recv()
                 if compressData != '':
@@ -104,8 +99,7 @@ if __name__ == '__main__':
                     # ws.connect("wss://api.huobipro.com/ws")
 
                     globalTime = x + (18000 * (count + 1))
-                    tradeStr2 = """{"req": "market.zecusdt.kline.1min","id": "id10", "from": """ + str(
-                        globalTime) + """, "to":""" + str((globalTime + 18000)) + """ }"""
+                    tradeStr2 = """{"req": "market.zecusdt.kline.1min","id": "id10", "from": """ + str(globalTime) + """, "to":""" + str((globalTime + 18000)) + """ }"""
                     ws.send(tradeStr2)
                     compressData = ws.recv()
                     result = gzip.decompress(compressData).decode('utf-8')
