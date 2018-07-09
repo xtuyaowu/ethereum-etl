@@ -69,22 +69,22 @@ fi
 
 #锁钱包 cleos wallet lock -n ${wallet_name}
 if [ "$1" = "walletlock" ]; then
-	hba=`/usr/local/bin/cleos -u $2 wallet lock -n $3`;
-	echo cleos -u $2 wallet lock -n $3
+	hba=`/usr/local/bin/cleos wallet lock -n $2`;
+	echo cleos wallet lock -n $2
 	echo $hba
 fi
 
 #解锁钱包 cleos wallet unlock -n ${wallet_name} --password ${password}
 if [ "$1" = "walletunlock" ]; then
-	hba=`/usr/local/bin/cleos -u $2 wallet unlock -n $3 --password $4`;
-	echo cleos -u $2 wallet unlock -n $3 --password $4
+	hba=`/usr/local/bin/cleos wallet unlock -n $2 --password $3`;
+	echo cleos wallet unlock -n $2 --password $3
 	echo $hba
 fi
 
 #打开钱包 cleos wallet open
 if [ "$1" = "walletopen" ]; then
-	hba=`/root/eos/build/programs/cleos/cleos -u $2 wallet open -n $3`;
-	echo cleos -u $2 wallet open -n $3
+	hba=`/usr/local/bin/cleos wallet open -n $2`;
+	echo cleos wallet open -n $2
 	echo $hba
 fi
 
@@ -165,14 +165,14 @@ fi
 
 #购买
 if [ "$1" = "buyram" ]; then
-	hba=`/root/eos/build/programs/cleos/cleos -u $2 system buyram $3 $4 "$5 EOS";
+	hba=`/usr/local/bin/cleos -u $2 system buyram $3 $4 "$5 EOS"`;
 	echo cleos -u $2 system buyram $3 $4 "$5 EOS"
 	echo $hba
 fi
 
 #卖出
 if [ "$1" = "sellram" ]; then
-	hba=`/usr/local/bin/cleos -u $2 system sellram $3 $4;
+	hba=`/usr/local/bin/cleos -u $2 system sellram $3 $4`;
 	echo cleos -u $2 system sellram $3 $4
 	echo $hba
 fi
