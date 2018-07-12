@@ -7,15 +7,8 @@ import json
 from pymongo import MongoClient
 import paramiko
 
-# con = MongoClient('127.0.0.1', 27017)
-# eos = con.eos.eos
-# eos_config = con.eos.eos_config
-# ram = con.eos.ram
-# url_get_block = 'http://127.0.0.1:8888/v1/chain/get_block'
-# url_get_info = 'http://127.0.0.1:8888/v1/chain/get_info'
-
-transport = paramiko.Transport(('118.122.185.14', 333))
-transport.connect(username='root', password='cleos')
+transport = paramiko.Transport(('127.0.0.1', 333))
+transport.connect(username='root', password='123456')
 ssh = paramiko.SSHClient()
 ssh._transport = transport
 
@@ -49,14 +42,14 @@ def BuyRam():
         ramUtilization = (ramUsed / maxRam) * 100
 
         if real_time_price < 0.4:
-            # excuteSSHCommand('/root/pyworkspace/eos.sh walletlock yaowu')
-            # excuteSSHCommand('/root/pyworkspace/eos.sh walletunlock yaowu PW5JUvns4wVBEyb9fXGwpi9pcjyYtiJqjHFDgXFhQqR9vdaHQB1p7')
-            excuteSSHCommand('/root/pyworkspace/eos.sh buyram https://mainnet.eoscanada.com yaowulifang5 yaowulifang5 30')
+            # excuteSSHCommand('/root/pyworkspace/eos.sh walletlock wallet_name')
+            # excuteSSHCommand('/root/pyworkspace/eos.sh walletunlock wallet_name private_key')
+            excuteSSHCommand('/root/pyworkspace/eos.sh buyram https://mainnet.eoscanada.com account_name account_name 30')
 
         elif real_time_price > 0.5:
-            # excuteSSHCommand('/root/pyworkspace/eos.sh walletlock yaowu')
-            # excuteSSHCommand('/root/pyworkspace/eos.sh walletunlock yaowu PW5JUvns4wVBEyb9fXGwpi9pcjyYtiJqjHFDgXFhQqR9vdaHQB1p7')
-            excuteSSHCommand('/root/pyworkspace/eos.sh sellram https://mainnet.eoscanada.com yaowulifang5 30720')
+            # excuteSSHCommand('/root/pyworkspace/eos.sh walletlock wallet_name')
+            # excuteSSHCommand('/root/pyworkspace/eos.sh walletunlock wallet_name private_key')
+            excuteSSHCommand('/root/pyworkspace/eos.sh sellram https://mainnet.eoscanada.com account_name 30720')
 
         sleep(10)
 
