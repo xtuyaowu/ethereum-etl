@@ -24,7 +24,7 @@ mongo_connect.authenticate(name='hashpaydl', password='hsashpaydldr3')
 erc20_transfers = mongo_connect.erc20_transfers
 erc20_receipt = mongo_connect.erc20_receipt
 erc20_transaction = mongo_connect.erc20_transaction
-eth_config = mongo_connect.eth_config
+eth_config = mongo_connect.eth_erc20_config
 
 class ExportErc20TransfersJob(BatchExportJob):
     def __init__(
