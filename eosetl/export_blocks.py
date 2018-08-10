@@ -35,11 +35,12 @@ def extractEosBlockData():
             x = json.loads(r.text)
             eos.insert(x)
 
-            for t in x['transactions']:
+            for t in x.get('transactions'):
                 try:
                     for a in t['trx']['transaction']['actions']:
                         a["block_id"] = x["id"]
                         a["timestamp"] = x["timestamp"]
+                        a["trx_id"] = t['trx']["id"]
                         for key, value in a["data"].items():
                             a["data_" + key] = value
                         print(a)
@@ -48,7 +49,7 @@ def extractEosBlockData():
                     pass
 
             try:
-                for q in x['transactions']:
+                for q in x.get('transactions'):
                     for a in q['trx']['transaction']['actions']:
                         if a['name'] == 'buyram':
                             ramDict = {}
@@ -70,7 +71,7 @@ def extractEosBlockData():
                 print(exstr)
 
             try:
-                for q in x['transactions']:
+                for q in x.get('transactions'):
                     for a in q['trx']['transaction']['actions']:
                         if a['name'] == 'buyrambytes':
                             ramDict = {}
@@ -88,7 +89,7 @@ def extractEosBlockData():
                 print(exstr)
 
             try:
-                for q in x['transactions']:
+                for q in x.get('transactions'):
                     for a in q['trx']['transaction']['actions']:
                         if a['name'] == 'sellram':
                             ramDict = {}
@@ -180,7 +181,6 @@ def minerRam():
                 pass
 
 def dealEos():
-    ram = con.eos.ram
     rams = ram.find({})
     for ram_object in rams:
         quant = ram_object["quant"]
@@ -191,7 +191,6 @@ def dealEos():
         ram.save(ram_object)
 
 def dealActions():
-    eos = con.eos.eos
     eoss = eos.find({})
     for eos_object in eoss:
         for t in eos_object['transactions']:
@@ -206,7 +205,7 @@ def dealActions():
             except Exception as e:
                 pass
 if __name__ == '__main__':
-    # extractEosBlockData()
+    extractEosBlockData()
     # minerRam()
     # dealEos()
-    dealActions()
+    # dealActions()
