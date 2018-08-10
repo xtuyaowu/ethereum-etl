@@ -9,6 +9,7 @@ from ethereumetl.jobs.batch_export_job import BatchExportJob
 from ethereumetl.json_rpc_requests import generate_get_block_by_number_json_rpc
 from ethereumetl.mappers.block_mapper import EthBlockMapper
 from ethereumetl.mappers.transaction_mapper import EthTransactionMapper
+from export_blocks_and_transactions import mongo_connect
 
 BLOCK_FIELDS_TO_EXPORT = [
     'block_number',
@@ -44,12 +45,9 @@ TRANSACTION_FIELDS_TO_EXPORT = [
     'tx_input'
 ]
 
-#con = MongoClient('127.0.0.1', 27017)
-con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
-
-blocks_exporter = con.eth.blocks_exporter
-transactions_exporter = con.eth.transactions_exporter
-eth_config = con.eth.eth_blockConfig
+blocks_exporter = mongo_connect.blocks_exporter
+transactions_exporter = mongo_connect.transactions_exporter
+eth_config = mongo_connect.eth_blockConfig
 
 # Exports blocks and transactions
 class ExportBlocksJob(BatchExportJob):

@@ -33,12 +33,12 @@ from ethereumetl.thread_local_proxy import ThreadLocalProxy
 #
 # job.run()
 
-#con = MongoClient('127.0.0.1', 27017)
-con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
-eth_config = con.eth.eth_config
+client = MongoClient(host='172.16.0.24', port=28018)
+mongo_connect = client['blockchain']
+mongo_connect.authenticate(name='hashpaydl', password='hsashpaydldr3')
+eth_config = mongo_connect.eth_erc20_config
 geth_ipc = "/home/dl/geth-alltools-linux-amd64-1.8.2-b8b9f7f4/chain/localchain/geth.ipc"
-http_address = "http://10.8.41.155:8545"
-
+http_address = "http://127.0.0.1:8545"
 
 def extractErc20BlockData():
 

@@ -8,12 +8,13 @@ import requests
 import json
 from pymongo import MongoClient
 
-con = MongoClient('127.0.0.1', 27017)
-
-eos = con.eos.eos
-eos_config = con.eos.eos_config
-ram = con.eos.ram
-eos_actions = con.eos.eos_actions
+client = MongoClient(host='172.16.0.24', port=28018)
+mongo_connect = client['blockchain']
+mongo_connect.authenticate(name='hashpaydl', password='hsashpaydldr3')
+eos_data = mongo_connect.eos_data
+eos_config = mongo_connect.eos_config
+ram = mongo_connect.eos_ram
+eos_actions = mongo_connect.eos_actions
 
 url_get_block = 'http://127.0.0.1:8888/v1/chain/get_block'
 url_get_info = 'http://127.0.0.1:8888/v1/chain/get_info'
@@ -33,7 +34,7 @@ def extractEosBlockData():
             payload = {'block_num_or_id': blockid, }
             r = requests.post(url_get_block, data=json.dumps(payload), timeout=20)
             x = json.loads(r.text)
-            eos.insert(x)
+            eos_data.insert(x)
 
             for t in x.get('transactions'):
                 try:
@@ -111,7 +112,7 @@ def extractEosBlockData():
         sleep(3)
 
 def minerRam():
-    q = eos.find({"transactions.trx.transaction.actions.name": "buyram"})
+    q = eos_data.find({"transactions.trx.transaction.actions.name": "buyram"})
     cnt = 0
     for x in q:
         for t in x['transactions']:
@@ -134,7 +135,7 @@ def minerRam():
                 print(exstr)
                 pass
 
-    q = eos.find({"transactions.trx.transaction.actions.name": "buyrambytes"})
+    q = eos_data.find({"transactions.trx.transaction.actions.name": "buyrambytes"})
     cnt = 0
     for x in q:
         for t in x['transactions']:
@@ -157,7 +158,7 @@ def minerRam():
                 print(exstr)
                 pass
 
-    q = eos.find({"transactions.trx.transaction.actions.name": "sellram"})
+    q = eos_data.find({"transactions.trx.transaction.actions.name": "sellram"})
     cnt = 0
     for x in q:
         for t in x['transactions']:
@@ -191,7 +192,7 @@ def dealEos():
         ram.save(ram_object)
 
 def dealActions():
-    eoss = eos.find({})
+    eoss = eos_data.find({})
     for eos_object in eoss:
         for t in eos_object['transactions']:
             try:

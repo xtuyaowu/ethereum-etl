@@ -7,6 +7,7 @@ from ethereumetl.mappers.erc20_transfer_mapper import EthErc20TransferMapper
 from ethereumetl.mappers.receipt_log_mapper import EthReceiptLogMapper
 from ethereumetl.mappers.transaction_mapper import EthTransactionMapper
 from ethereumetl.service.erc20_processor import EthErc20Processor, TRANSFER_EVENT_TOPIC
+from export_erc20_transfers import mongo_connect
 
 FIELDS_TO_EXPORT = [
     'erc20_token',
@@ -18,13 +19,10 @@ FIELDS_TO_EXPORT = [
     'erc20_block_number'
 ]
 
-#con = MongoClient('127.0.0.1', 27017)
-con = MongoClient('mongodb://eth:jldou!179jJL@10.11.14.15:27017/eth')
-
-erc20_transfers = con.eth.erc20_transfers
-erc20_receipt = con.eth.erc20_receipt
-erc20_transaction = con.eth.erc20_transaction
-eth_config = con.eth.eth_config
+erc20_transfers = mongo_connect.erc20_transfers
+erc20_receipt = mongo_connect.erc20_receipt
+erc20_transaction = mongo_connect.erc20_transaction
+eth_config = mongo_connect.eth_config
 
 class ExportErc20TransfersJob(BatchExportJob):
     def __init__(
