@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import traceback
-from time import sleep
+import time
 
 __author__ = 'terryyao'
 
@@ -108,8 +108,10 @@ def extractEosBlockData():
                 print(exstr)
 
         blockConfig["blockid"] = blockid
+        t = time.time()
+        blockConfig['timestamp'] = int(round(t * 1000))
         eos_config.save(blockConfig)
-        sleep(3)
+        time.sleep(3)
 
 def minerRam():
     q = eos_data.find({"transactions.trx.transaction.actions.name": "buyram"})

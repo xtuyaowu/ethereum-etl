@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from time import sleep
-
+import time
 from pymongo import MongoClient
 from web3 import IPCProvider, Web3, HTTPProvider
 
@@ -57,6 +57,8 @@ def extractErc20BlockData():
                 blockConfig["export_flag"] = True
                 blockid += 1
                 blockConfig["blockid"] = blockid
+                t = time.time()
+                blockConfig['timestamp'] = int(round(t * 1000))
                 eth_config.save(blockConfig)
                 job = ExportErc20TransfersJob(
                     start_block=blockid,

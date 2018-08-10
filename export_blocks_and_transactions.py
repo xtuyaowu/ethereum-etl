@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-from time import sleep
+import time
 from pymongo import MongoClient
 from web3 import IPCProvider, Web3, HTTPProvider
 
@@ -60,6 +60,8 @@ def extractBlockData():
                 blockConfig["export_flag"] = True
                 blockid += 1
                 blockConfig["blockid"] = blockid
+                t = time.time()
+                blockConfig['timestamp'] = int(round(t * 1000))
                 eth_config.save(blockConfig)
                 job = ExportBlocksJob(
                     start_block=blockid,
@@ -71,7 +73,7 @@ def extractBlockData():
                     transactions_output="")
 
                 job.run()
-        sleep(3)
+        time.sleep(3)
 
 if __name__ == '__main__':
     extractBlockData()
