@@ -68,6 +68,7 @@ def extractBlockData():
                     end_block=blockidNow,
                     batch_size=100,
                     ipc_wrapper=ThreadLocalProxy(lambda: IPCWrapper(geth_ipc, timeout=300)),
+                    web3=ThreadLocalProxy(lambda: Web3(IPCProvider(geth_ipc, timeout=300))),
                     max_workers=5,
                     blocks_output="",
                     transactions_output="")

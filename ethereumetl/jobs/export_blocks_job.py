@@ -59,12 +59,14 @@ class ExportBlocksJob(BatchExportJob):
             end_block,
             batch_size,
             ipc_wrapper,
+            web3,
             max_workers=5,
             blocks_output=None,
             transactions_output=None,
             block_fields_to_export=BLOCK_FIELDS_TO_EXPORT,
             transaction_fields_to_export=TRANSACTION_FIELDS_TO_EXPORT):
         super().__init__(start_block, end_block, batch_size, max_workers)
+        self.web3 = web3
         self.ipc_wrapper = ipc_wrapper
         self.blocks_output = blocks_output
         self.transactions_output = transactions_output
@@ -122,6 +124,12 @@ class ExportBlocksJob(BatchExportJob):
                 tx = self.transaction_mapper.transaction_to_dict(tx)
                 if transactions_exporter.find_one({"tx_block_hash": tx['tx_block_hash']}) is None:
                     tx["timestamp"] = block_timestamp
+                    receipt = self.web3.eth.getTransactionReceipt(tx.get("tx_hash"))
+                    gasUsed = receipt.gasUsed
+                    tx["status"] = 0
+                    if int(gasUsed) <= int(tx.get("tx_gas")):
+                        tx["status"] = 1  # 1 success
+                    print(tx)
                     transactions_exporter.insert(tx)
 
 
